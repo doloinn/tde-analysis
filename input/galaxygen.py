@@ -1,6 +1,5 @@
 # David Lynn
 # Code to generate galaxy simulator input sample
-# Violating PEP8 :(
 
 # Directory stuff
 import os

@@ -1,6 +1,5 @@
 # David Lynn
 # Code to generate TDE simulator input sample
-# Violating PEP8 :(
 
 # Directory stuff
 import os
