@@ -1,9 +1,0 @@
-To run the simulations simply use:
-bash /path/to/run_simulations.sh /path/to/Gibis/directory
-If /path/to/Gibis/directory is not provided . is assumed; i.e. that the script is being run from the Gibis directory. The command used to run GIBIS itself may need to be changed to suit the user's setup.
-
-Example run would be place this directory somewhere (e.g. in ~), cd into directory, run `bash sun_simulations /gibis/gaia/cu2/Gibis'.
-
-The script uses a placeholder input file and replaces the source file parameter (using sed) with the source files found in the galaxy_source_files and tde_source_files directories iteratively.
-
-Any questions don't hesitate to contact david.lynn@ucdconnect.ie. Thank you.
