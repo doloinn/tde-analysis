@@ -6,7 +6,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
-import random
 
 # Tweaked Pandas' scatter_matrix to use 2D histograms
 import my_scatter_matrix
@@ -18,7 +17,7 @@ galaxy_sim = pd.read_csv('galaxy_parsed.csv', index_col=0)
 # Non-detections look like this, replace with NaN
 galaxy_sim.replace(-1.0000000150474662e+30, np.nan, inplace=True)
 
-# Separate in ellipticals and spirals
+# Separate into ellipticals and spirals
 gal_data = [{}, {}]
 for key, val in galaxy_data.items():
     if val['galaxy type'] == 'elliptical':
@@ -36,7 +35,7 @@ for k in range(2):
     # Put stuff into dictionary to convert to dataframe later
     simulated_data = {}
 
-    # Loop over inputs make temporary dictionary with data
+    # Loop over inputs, make temporary dictionary with data
     for i, j in gal_data[k].items():
         temp_gal_dic = gal_data[k][i]['data']
         temp_gal_dic_in = {'in %s' % key: temp_gal_dic[key] for key in temp_gal_dic.keys()}

@@ -89,48 +89,6 @@ smdrop = ['in ra', 'in dec', 'galaxy source_g_mag', 'tde source_g_mag', 'out fou
 tdedf_sm = tdedf.drop(smdrop, 1)
 tdedf_detected_sm = tdedf_detected.drop(smdrop, 1)
 
-# sm = my_scatter_matrix2.scatter_matrix(tdedf_detected_sm, tdedf_sm)
-
-# print(tdedf_detected['in dec'].unique())
-
-# Whole light curve plots
-# for gm in tdedf['in galaxy mag'].unique()[:]:
-#     for gr in tdedf['in galaxy radius'].unique()[:]:
-#         for pm in tdedf['in peak mag'].unique()[:]:
-#             plotdf = tdedf.loc[tdedf['in galaxy mag'] == gm].loc[tdedf['in galaxy radius'] == gr].loc[tdedf['in peak mag'] == pm]
-#             plotdf_detected = tdedf_detected.loc[tdedf_detected['in galaxy mag'] == gm].loc[tdedf_detected['in galaxy radius'] == gr].loc[tdedf_detected['in peak mag'] == pm]
-#             x = plotdf['in point time']
-#             y = plotdf['total source_g_mag']
-#             x_det = plotdf_detected['in point time']
-#             # y_det = plotdf_detected['total source_g_mag']
-#             y_det = plotdf_detected['out found_mag']
-#             plt.figure()
-#             plt.plot(x, y, '.', alpha=0.2, label='Simulated')
-#             # plt.plot(x_det, y_det - 1, '.', alpha=0.2, label='Detected')
-#             plt.plot(x_det, y_det, 'xC3', alpha=0.2, label='Detected')
-#             plt.xlabel('Time [days]')
-#             plt.ylabel('Brightness [$G$ mag]')
-#             # plt.title('Galaxy radius: %s, galaxy magnitude: %s, TDE peak magnitude: %s' % (gr, gm, pm))
-#             plt.gca().invert_yaxis()
-#             plt.legend(loc='best')
-#             fig = plt.gcf()
-#             fig.canvas.set_window_title('%s, %s, %s' %(gr, gm, pm))
-
-
-# for gm in tdedf['in galaxy mag'].unique()[:]:
-#     for gr in tdedf['in galaxy radius'].unique()[:]:
-#         for pm in tdedf['in peak mag'].unique()[:]:
-#             plotdf = tdedf.loc[tdedf['in galaxy mag'] == gm].loc[tdedf['in galaxy radius'] == gr].loc[tdedf['in peak mag'] == pm]
-#             plotdf_detected = tdedf_detected.loc[tdedf_detected['in galaxy mag'] == gm].loc[tdedf_detected['in galaxy radius'] == gr].loc[tdedf_detected['in peak mag'] == pm]
-#             plt.figure()
-#             plt.hist(tdedf['in dec'])
-#             histout = plt.hist(tdedf_detected['in dec'])
-#             plt.axhline(max(histout[0]))
-
-
-# plt.rc('font',**{'family':'serif','serif':['Palatino']})
-# # plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-# plt.rc('text', usetex=True)
 
 # Sampled light curve plots
 cadence = [37, 26, 15]
@@ -181,7 +139,7 @@ def linefun(x, a, b, c):
     return a * x + b
 
 def expfun(x, a, b, c):
-    return a * np.exp(x) + b
+    return a * np.exp(-b * x) + c
 
 # def odrdec(B, x):
 #     return decayfun(x, *B)
@@ -268,27 +226,8 @@ for i in random.sample(lc, 10):
             fitdata[j].append(min(tempfitdata))
 
 
-
-# plt.xlabel('Time [days]')
-# plt.ylabel('Brightness [$G$ mag]')
-# plt.gca().invert_yaxis()
-
-
-
-# for i, d in enumerate(fitdata):
-#     for j in d:
-#         j == ['fucked'] * 2
-#         cntr[i] += 1
-
 sourcedf = pd.DataFrame({'gal mag': [i.iloc[0]['in galaxy mag'] for i in lc], 'gal rad': [i.iloc[0]['in galaxy radius'] for i in lc], 'peak mag': [i.iloc[0]['in peak mag'] for i in lc], 'cadence': [i.iloc[1]['in point time'] - i.iloc[0]['in point time'] for i in lc]})
 fitdf = pd.DataFrame({'powerlaw': fitdata[0], 'line': fitdata[1], 'exp': fitdata[2]})
 outdf = pd.concat([fitdf, sourcedf], axis=1)
-print(fitdf)
-print(sourcedf)
-print(outdf)
-# outdf.to_csv('fittdes.csv')
-# print(fitdf.mean())
 
-# print(fitdata)
-# print(cntr)
 plt.show()

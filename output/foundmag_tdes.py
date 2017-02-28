@@ -7,7 +7,7 @@ from collections import Counter
 import random
 import time
 
-import my_scatter_matrix2
+import my_scatter_matrix
 
 cadence = [37, 26, 15]
 
@@ -63,8 +63,6 @@ rename = {'in galaxy mag': '$V_G$', 'in galaxy radius': '$R_G$', 'in snapshot ma
 
 tdedf_detected = tdedf.dropna()
 
-print(len(tdedf_detected) / (3 * len(tdedf_detected.loc[tdedf_detected['in dec'] == 500])))
-exit()
 
 # Histogram matrix
 smdrop = ['in ra', 'in dec', 'galaxy source_g_mag', 'tde source_g_mag', 'out found_mag']

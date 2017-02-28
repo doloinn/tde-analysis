@@ -7,7 +7,7 @@ from collections import Counter
 import random
 import time
 
-import my_scatter_matrix2
+import my_scatter_matrix
 
 cadence = [37, 26, 15]
 
@@ -68,7 +68,7 @@ smdrop = ['in ra', 'in dec', 'galaxy source_g_mag', 'tde source_g_mag', 'out fou
 tdedf_sm = tdedf.drop(smdrop, 1)
 tdedf_detected_sm = tdedf_detected.drop(smdrop, 1)
 
-# sm = my_scatter_matrix2.scatter_matrix(tdedf_detected_sm, tdedf_sm)
+# sm = my_scatter_matrix.scatter_matrix(tdedf_detected_sm, tdedf_sm)
 
 # print(tdedf_detected['in dec'].unique())
 

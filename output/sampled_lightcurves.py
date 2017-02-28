@@ -4,36 +4,15 @@ import matplotlib.pyplot as plt
 import pickle
 from collections import Counter
 
-from scipy.optimize import curve_fit
-
 import random
 import time
 
-import my_scatter_matrix2
-
-ZEROFLUX = 3.631e-11  # W m-2 nm-1
+import my_scatter_matrix
 
 cadence = [37, 26, 15]
 
-def flux2mag(flux):
-    return -2.5 * np.log10(flux / ZEROFLUX)
-
-def mag2flux(mag):
-    return ZEROFLUX * 10**(-mag / 2.5)
-
 def add_mags(m1, m2):
     return -2.5 * np.log10(10**(-m1/2.5) + 10**(-m2/2.5))
-
-def sub_mags(m1, m2):
-    return -2.5 * np.log10(10**(-m1/2.5) - 10**(-m2/2.5))
-
-def decayfun(t, a, b):
-    return a * t**(-5/3) + b
-
-
-print(mag2flux(20) / mag2flux(16))    
-exit()
-
 
 tde_data = pickle.load(open('tdes.pickle', 'rb'))
 tde_sim = pd.read_csv('tde_parsed.csv', index_col=0)
@@ -84,65 +63,19 @@ rename = {'in galaxy mag': '$V_G$', 'in galaxy radius': '$R_G$', 'in snapshot ma
 
 tdedf_detected = tdedf.dropna()
 
+# Histogram matrix
+smdrop = ['in ra', 'in dec', 'galaxy source_g_mag', 'tde source_g_mag', 'out found_mag']
+tdedf_sm = tdedf.drop(smdrop, 1)
+tdedf_detected_sm = tdedf_detected.drop(smdrop, 1)
 
-plotdf = tdedf.loc[tdedf['in galaxy mag'] == 16].loc[tdedf['in galaxy radius'] == 0.5].loc[tdedf['in peak mag'] == 14]
-plotdf_detected = plotdf.dropna()
-subtracted_mag = sub_mags(plotdf_detected['out found_mag'], 16.1)
-# print(plotdf_detected, subtracted_mag)
-# exit()
+# sm = my_scatter_matrix.scatter_matrix(tdedf_detected_sm, tdedf_sm)
 
-# print(max(plotdf_detected['out found_mag']))
-
-# plt.plot(plotdf['in point time'], plotdf['total source_g_mag'], '.', alpha=0.8)
-plt.plot(plotdf_detected['in point time'], plotdf_detected['out found_mag'], '.', alpha=0.8)
-plt.plot(plotdf_detected['in point time'], subtracted_mag, '.', alpha=0.8)
-# plt.plot(plotdf_detected['in point time'].iloc[70:], sub_mags(plotdf_detected['out found_mag'].iloc[70:], 16.1), '.', alpha=0.8)
-# yerr = np.sqrt(mag2flux(subtracted_mag))
-# print(yerr)
-# upyerr = sub_mags(flux2mag(mag2flux(subtracted_mag) + yerr), subtracted_mag)
-# downyerr = sub_mags(subtracted_mag, flux2mag(mag2flux(subtracted_mag) - yerr))
-# print(subtracted_mag, downyerr)
-# asymerr = [downyerr, upyerr]
-# plt.errorbar(plotdf_detected['in point time'], subtracted_mag, yerr=asymerr, fmt='.')
-# x_ref = plotdf_detected['in point time'].iloc[70:]
-# y_ref = flux2mag(mag2flux(8) * x_ref**-(5/3))
-# plt.plot(x_ref, y_ref)
-
-x = plotdf_detected['in point time'].iloc[70:]
-y = mag2flux(subtracted_mag[70:])
-popt, pcov = curve_fit(decayfun, x, y, sigma=np.sqrt(y), absolute_sigma=True, method='trf')
-popt2, pcov2 = curve_fit(decayfun, x, mag2flux(plotdf_detected['out found_mag'][70:]))
-
-fit = decayfun(x, *popt)
-
-plt.plot(x, flux2mag(fit))
-plt.plot(x, flux2mag(decayfun(x, *popt2)))
-print(flux2mag(popt2[1]))
-# print(popt, pcov)
-
-# def decayerr(t, pcov):
-#     ader = t**(-5/3)
-#     bder = 1
-#     # print((ader**2) * pcov[0, 0], (bder**2) * pcov[1, 1], 2 * ader * bder * pcov[0, 1])
-#     return np.sqrt((ader**2) * pcov[0, 0] + (bder**2) * pcov[1, 1] + 2 * ader * bder * pcov[0, 1])
-
-# fiterr = decayerr(x, pcov)
-
-# # print(fit, fiterr)
-
-# plt.fill_between(x, flux2mag(fit - fiterr), flux2mag(fit + fiterr), alpha=0.4)
-
-
-
-plt.gca().invert_yaxis()
-
-
-
+# print(tdedf_detected['in dec'].unique())
 
 # Whole light curve plots
-# for gm in tdedf['in galaxy mag'].unique()[:1]:
-#     for gr in tdedf['in galaxy radius'].unique()[:1]:
-#         for pm in tdedf['in peak mag'].unique()[:1]:
+# for gm in tdedf['in galaxy mag'].unique()[:]:
+#     for gr in tdedf['in galaxy radius'].unique()[:]:
+#         for pm in tdedf['in peak mag'].unique()[:]:
 #             plotdf = tdedf.loc[tdedf['in galaxy mag'] == gm].loc[tdedf['in galaxy radius'] == gr].loc[tdedf['in peak mag'] == pm]
 #             plotdf_detected = tdedf_detected.loc[tdedf_detected['in galaxy mag'] == gm].loc[tdedf_detected['in galaxy radius'] == gr].loc[tdedf_detected['in peak mag'] == pm]
 #             x = plotdf['in point time']
@@ -162,6 +95,55 @@ plt.gca().invert_yaxis()
 #             fig = plt.gcf()
 #             fig.canvas.set_window_title('%s, %s, %s' %(gr, gm, pm))
 
+
+# for gm in tdedf['in galaxy mag'].unique()[:]:
+#     for gr in tdedf['in galaxy radius'].unique()[:]:
+#         for pm in tdedf['in peak mag'].unique()[:]:
+#             plotdf = tdedf.loc[tdedf['in galaxy mag'] == gm].loc[tdedf['in galaxy radius'] == gr].loc[tdedf['in peak mag'] == pm]
+#             plotdf_detected = tdedf_detected.loc[tdedf_detected['in galaxy mag'] == gm].loc[tdedf_detected['in galaxy radius'] == gr].loc[tdedf_detected['in peak mag'] == pm]
+#             plt.figure()
+#             plt.hist(tdedf['in dec'])
+#             histout = plt.hist(tdedf_detected['in dec'])
+#             plt.axhline(max(histout[0]))
+
+
+plt.rc('font',**{'family':'serif','serif':['Palatino']})
+# plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+plt.rc('text', usetex=True)
+
+# Sampled light curve plots
+cadence = [37, 26, 15]
+lc = []
+tdedf['light curve'] = 0
+
+for gm in tdedf['in galaxy mag'].unique():
+    for gr in tdedf['in galaxy radius'].unique():
+        for pm in tdedf['in peak mag'].unique():
+            df = tdedf.loc[tdedf['in galaxy mag'] == gm].loc[tdedf['in galaxy radius'] == gr].loc[tdedf['in peak mag'] == pm]
+            for cad in cadence:
+                for p in range(cad):
+                    lidx = [p + i * cad for i in range(len(df) // cad)]
+                    lc.append(df.iloc[lidx])
+
+# print(len(lc))
+
+for i in random.sample(lc, 10):
+    df_det = i.dropna()
+    gr = i.iloc[0]['in galaxy radius']
+    gm = i.iloc[0]['in galaxy mag']
+    pm = i.iloc[0]['in peak mag']
+
+    fig = plt.figure()
+    plt.plot(i['in point time'], i['total source_g_mag'], 'b.', label='Simulated')
+    plt.plot(df_det['in point time'], df_det['out found_mag'], 'rx', label='Detected')
+    # plt.axhline(i.iloc[0]['galaxy source_g_mag'], label='Galaxy magnitude', color='purple')
+    # plt.axhline(20.7, label='Gaia cut off', color='green')
+    plt.xlabel('Time [days]')
+    plt.ylabel('Brightness [ $G$ mag]')
+    # plt.title('Galaxy radius: %s, galaxy V magnitude: %s, TDE peak magnitude: %s' % (gr, gm, pm))
+    plt.gca().invert_yaxis()
+    plt.legend(loc='best')
+    fig.canvas.set_window_title('%s, %s, %s' %(gr, gm, pm))
 
 
 
