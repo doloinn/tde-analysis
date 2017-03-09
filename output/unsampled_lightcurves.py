@@ -1,3 +1,6 @@
+# David Lynn
+# Script which plots unsampled simulated light curves
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
